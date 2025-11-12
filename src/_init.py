@@ -8,41 +8,45 @@ from aiogram import Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
+from aiogram.filters import Command
 from aiogram.types import Message
 
 
 load_dotenv()
-# Bot token can be obtained via https://t.me/BotFather
 TOKEN = getenv("BOT_TOKEN")
-
-# All handlers should be attached to the Router (or Dispatcher)
 
 dp = Dispatcher()
 
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
-    """
-    This handler receives messages with `/start` command
-    """
-    await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
+    await message.answer(f"Привет! {html.bold('Ванпачман')} - бот, где вы сможете стать героем!")
+
+@dp.message(Command("help"))
+async def command_help_handler(message: Message) -> None:
+    await message.answer(f"Добавьте бота в чат.")
 
 
-@dp.message()
-async def echo_handler(message: Message) -> None:
-    try:
-        # Send a copy of the received message
-        await message.send_copy(chat_id=message.chat.id)
-    except TypeError:
-        # But not all the types is supported to be copied so need to handle it
-        await message.answer("Nice try!")
+@dp.message(Command("fight"))
+async def command_fight_handler(message: Message) -> None:
+    await message.answer("бой")
+
+@dp.message(Command("me"))
+async def command_profile_handler(message: Message) -> None:
+    await message.answer("Профиль")
+
+
+@dp.message(Command("stats"))
+async def command_stats_handler(message: Message) -> None:
+    await message.answer("Статистика беседы")
+
+@dp.message(Command("top"))
+async def command_top_handler(message: Message) -> None:
+    await message.answer("Топ во всех беседах")
 
 
 async def main() -> None:
-    # Initialize Bot instance with default bot properties which will be passed to all API calls
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-
-    # And the run events dispatching
     await dp.start_polling(bot)
 
 
